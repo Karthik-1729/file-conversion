@@ -1,0 +1,28 @@
+import requests
+import json 
+import base64
+
+# url_local = 'http://localhost:8080/2015-03-31/functions/function/invocations'
+# url_lambda = "https://h8brgez541.execute-api.us-east-1.amazonaws.com/testing/predict"
+# url_lambda = "https://dxtayceow1.execute-api.ap-south-1.amazonaws.com/dev/convert"
+# data1 = {"values":[[0.1,2,0.1,3]]}
+# data2 ={"values":[[5.9,3.0,5.1,2.3]]}
+
+
+# filename = 'sample1.rtf'
+filename = 'docker_commands.pdf'
+input_path = 'C:/Users/karth/Desktop/mydockerbuild/input_files/'+filename
+
+
+# files = {'file': open(input_path, 'rb')}
+with open(input_path, 'rb') as f:
+#   contents = f.read()
+#   files = {'file': f}
+#   result1= requests.post(url_local, data=json.dumps({'pdf': base64.b64encode(f.read()).decode("ascii")}).encode())
+#   result1= requests.post(url_local, data = json.dumps({'file':base64.b64encode(f.read()).decode("ascii"),'target_format':'docx','filename':filename}))
+    dict1 = {'file':base64.b64encode(f.read()).decode("ascii"),'target_format':'pdf','filename':filename}
+    out_file = open("myfile.json", "w")
+    json.dump(dict1, out_file, indent = 6)
+    out_file.close()
+#   result1= requests.post(url_local, data=json.dumps({'pdf': base64.b64encode(f.read()).decode("ascii")}).encode())
+

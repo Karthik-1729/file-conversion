@@ -1,0 +1,19 @@
+FROM python:3.8.15-slim as builder
+# install stuff
+COPY requirements.txt .
+RUN python -m pip install --upgrade pip
+
+RUN pip install -r requirements.txt
+FROM python:3.8.15-slim
+
+# this is for sure required
+COPY --from=builder /usr/local/lib/python3.8/site-packages /usr/local/lib/python3.8/site-packages
+RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
+
+# this depends on what you are installing
+COPY inp_files ./inp_files
+COPY lo.tar.br   /opt/
+
+COPY app.py .
+CMD ["app.py"]
+ENTRYPOINT ["python3.8"]

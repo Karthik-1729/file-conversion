@@ -1,0 +1,7 @@
+brotlipy
+aspose-words
+pdf2pptx
+tabula-py
+pdf2docx
+boto3
+Flask
