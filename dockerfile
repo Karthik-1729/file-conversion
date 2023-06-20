@@ -18,7 +18,8 @@ RUN pip install -r requirements.txt
 
 # RUN  pip3 install -r requirements.txt
 
-
+COPY fullchain.pem ./
+COPY privkey.pem ./
 
 COPY app.py ./
 

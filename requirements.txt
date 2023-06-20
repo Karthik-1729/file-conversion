@@ -5,3 +5,4 @@ tabula-py
 pdf2docx
 boto3
 Flask
+flask-cors

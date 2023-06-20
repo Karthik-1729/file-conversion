@@ -11,11 +11,8 @@ import boto3
 import tabula
 from pdf2docx import parse
 from flask import Flask, request, redirect, jsonify,send_file
-from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
-cors = CORS(app)
-app.config['CORS_HEADERS'] = 'Content-Type'
 app.secret_key = "secret key"
 # app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
@@ -127,8 +124,8 @@ def upload_to_s3(file_path,bucket_name,key):
     
     service_name='s3'
     region_name='ap-south-1'
-    aws_access_key_id='AKIA3Z4YNKE7P3T6456Z'
-    aws_secret_access_key='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'
+    aws_access_key_id='AKIA2SOADAQSCHJHCRQK'
+    aws_secret_access_key='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'
     s3 = boto3.client('s3')
 
     s3 = boto3.resource(
@@ -144,19 +141,25 @@ def upload_to_s3(file_path,bucket_name,key):
 
 @app.route('/file-convert', methods=['POST'])
 def file_conversion():
-    json_data = request.json
-    target_format = json_data["target_format"]
-    filename = json_data["filename"]
-    key_prefix = 'converted_files'
-    bucket = 'document-translation'
+    # json_data = request.json
+    # target_format = json_data["target_format"]
+    # filename = json_data["filename"]
+    target_format = request.form['target_format']
+    filename = request.form['filename']
+    key_prefix = 'tmp'
+    bucket = 'kr-nmt'
     basename,src_format = filename.split('.')
     print('filename',filename)
-    encoded_string = json_data["file"].encode('ascii')
+    # encoded_string = json_data["file"].encode('ascii')
     # upload_folder = "/tmp"
     upload_folder = "./inp_files"
     inp_file_path = os.path.join(upload_folder,filename)
-    with open(os.path.join(upload_folder,filename), "wb") as fi:
-        fi.write(base64.b64decode(encoded_string))
+    # with open(os.path.join(upload_folder,filename), "wb") as fi:
+    #     fi.write(base64.b64decode(encoded_string))
+    file = request.files['file']
+    # filename = secure_filename(file.filename)
+    file.save(os.path.join(upload_folder,filename))
+    
     output_folder = "./out_files"
     if not os.path.isdir(output_folder):
         os.makedirs(output_folder)
@@ -186,7 +189,7 @@ def file_conversion():
             conv_status = False
         print('conversion status',conv_status)
         upload_to_s3(out_path, bucket, f"{key_prefix}/{out_filename}")
-        response = f'https://document-translation.s3.ap-south-1.amazonaws.com/converted_files/{out_filename}'
+        response = f'https://kr-nmt.s3.ap-south-1.amazonaws.com/tmp/{out_filename}'
         os.remove(out_path)
         os.remove(inp_file_path)
         data =  {"statusCode":200,"headers":headers,"response":response}
@@ -205,4 +208,4 @@ def file_conversion():
 
     # return {"statusCode":200,"headers":headers,"response":response}
 if __name__ == "__main__":
-    app.run(host="0.0.0.0",port=5008,debug=False,ssl_context=('fullchain.pem', 'privkey.pem'))
+    app.run(host="0.0.0.0",port=5013)

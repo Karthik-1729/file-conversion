@@ -127,8 +127,8 @@ def upload_to_s3(file_path,bucket_name,key):
     
     service_name='s3'
     region_name='ap-south-1'
-    aws_access_key_id='AKIA3Z4YNKE7P3T6456Z'
-    aws_secret_access_key='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'
+    aws_access_key_id='AKIA2SOADAQSCHJHCRQK'
+    aws_secret_access_key='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'
     s3 = boto3.client('s3')
 
     s3 = boto3.resource(
@@ -147,8 +147,8 @@ def file_conversion():
     json_data = request.json
     target_format = json_data["target_format"]
     filename = json_data["filename"]
-    key_prefix = 'converted_files'
-    bucket = 'document-translation'
+    key_prefix = 'tmp'
+    bucket = 'kr-nmt'
     basename,src_format = filename.split('.')
     print('filename',filename)
     encoded_string = json_data["file"].encode('ascii')
@@ -186,7 +186,7 @@ def file_conversion():
             conv_status = False
         print('conversion status',conv_status)
         upload_to_s3(out_path, bucket, f"{key_prefix}/{out_filename}")
-        response = f'https://document-translation.s3.ap-south-1.amazonaws.com/converted_files/{out_filename}'
+        response = f'https://kr-nmt.s3.ap-south-1.amazonaws.com/tmp/{out_filename}'
         os.remove(out_path)
         os.remove(inp_file_path)
         data =  {"statusCode":200,"headers":headers,"response":response}
@@ -205,4 +205,5 @@ def file_conversion():
 
     # return {"statusCode":200,"headers":headers,"response":response}
 if __name__ == "__main__":
-    app.run(host="0.0.0.0",port=5008,debug=False,ssl_context=('fullchain.pem', 'privkey.pem'))
+    # app.run(host="0.0.0.0",port=5008,debug=False,ssl_context=('fullchain.pem', 'privkey.pem'))
+    app.run(host="0.0.0.0",port=5008)
